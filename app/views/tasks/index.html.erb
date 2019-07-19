@@ -1,18 +1,17 @@
-<!-- タスク一覧を消す
 
-<h1>タスクリスト</h1>
+
+
+<% if logged_in? %>
+  <p>ログイン完了ユーザ: <%= current_user.name %></p>
+
+<!-- ここに自分のタスクを表示する-->
 <ul>
   <% @tasks.each do |task| %>
     <li><%= link_to task.id, task %> : <%= task.status %> &gt; <%= task.content %></li>
   <% end %>
 </ul>
-<%= link_to '新タスクの追加', new_task_path %>
-
-ここまで-->
 
 
-<% if logged_in? %>
-  <p>ログイン完了ユーザ: <%= current_user.name %></p>
   <div class="center jumbotron">
     <div class="text-center">
       <%= link_to '新タスクの追加', new_task_path %>

@@ -1,9 +1,15 @@
 class TasksController < ApplicationController
   
  before_action :set_task, only: [:show, :edit, :update, :destroy]
+ before_action :require_user_logged_in, only: [:create, :edit, :update, :destroy, :index]
     
  def index
-    @tasks = Task.all
+    if logged_in?
+      @task = current_user.tasks.build  # form_with 用
+      @tasks = current_user.tasks.order(id: :desc)
+#    else
+#      render template:'users/new'
+    end
  end
 
  def show
@@ -14,11 +20,12 @@ class TasksController < ApplicationController
  end
 
  def create
-    @task = Task.new(task_params)
+#    @task = Task.new(task_params)
+    @task = current_user.tasks.build(task_params)
 
     if @task.save
       flash[:success] = 'タスク が追加されました'
-      redirect_to @task
+      redirect_to root_url
     else
       flash.now[:danger] = 'タスク が追加されませんでした'
       render :new
@@ -37,7 +44,7 @@ class TasksController < ApplicationController
 
     if @task.update(task_params)
       flash[:success] = 'タスク は正常に修正されました'
-      redirect_to @task
+      redirect_to root_url
     else
       flash.now[:danger] = 'タスク は修正されませんでした'
       render :edit
