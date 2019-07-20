@@ -1,8 +1,7 @@
 class TasksController < ApplicationController
-  
- before_action :set_task, only: [:show, :edit, :update, :destroy]
+ before_action :require_user_logged_in, only: [:create, :index, :show] 
+# before_action :set_task, only: [:show, :edit, :update, :destroy]
 # before_action :require_user_logged_in, only: [:create, :edit, :update, :destroy, :index, :show]
- before_action :require_user_logged_in, only: [:create, :index]
  before_action :correct_user, only: [:edit, :update, :destroy, :show]
     
  def index
@@ -21,6 +20,9 @@ class TasksController < ApplicationController
 
  def create
     @task = current_user.tasks.build(task_params)
+    # @task = Task.new(task_params)
+    # @task.user_id = current_user.id
+    # @task.user = current_user
 
     if @task.save
       flash[:success] = 'タスク が追加されました'
@@ -60,6 +62,8 @@ class TasksController < ApplicationController
   private
 
   def set_task
+    # find(対象のidが入る)は、対象のデータが無ければエラーを出す。
+    # find_by(id: 対象のidが入る)、対象のデータが無ければnilを返す。
     @task = Task.find(params[:id])
   end
 
@@ -69,6 +73,10 @@ class TasksController < ApplicationController
   
   def correct_user
     @task = current_user.tasks.find_by(id: params[:id])
+    # @task = Task.find_by(id: params[:id])
+    # if @task.nil? || @task.user != current_user
+    #   redirect_to root_url
+    # end
     unless @task
       redirect_to root_url
     end
